@@ -1,0 +1,73 @@
+version: "3.8"
+services:
+  app:
+    build:
+      args:
+        user: server
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: looperbattle
+    container_name: looperbattle-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    ports:
+      - 6001:6001
+    volumes:
+      - ./:/var/www
+    networks:
+      - looperbattle
+    user: root
+
+  nginx:
+    image: nginx:alpine
+    container_name: looperbattle-nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - looperbattle
+
+  postgres:
+    image: postgres:14.2
+    restart: always
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: pgsql
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - looperbattle
+
+  pgadmin:
+    image: neimheadh/phppgadmin:7.13.0
+    container_name: phppgadmin
+    ports:
+      - "8080:80"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASS: ${DB_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - looperbattle
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  looperbattle:
+    driver: bridge
+
