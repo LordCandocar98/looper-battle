@@ -2,26 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\LoginRequest;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterRequest;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => bcrypt($request->get('password')),
-            'role_id' => 2,
-        ]);
-
-        return response()->json(['user' => $user, 'message' => 'User registered successfully']);
+        try {
+            DB::beginTransaction();
+            $user = User::create([
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'password' => bcrypt($request->get('password')),
+                'role_id' => 2,
+                'is_verified' => false,
+            ]);
+            $user->notify(new VerifyEmailNotification($user));
+            DB::commit();
+            return response()->json([
+                'code' => 201,
+                'user' => $user,
+                'message' => 'Usuario registrado exitosamente.  Se enviará un correo electrónico para verificar.'
+            ], 201);
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error al registrar el usuario.'], 500);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error al procesar la solicitud.'], 500);
+        }
     }
 
     public function login(LoginRequest $request)
@@ -32,7 +51,15 @@ class AuthController extends Controller
             // Autenticación fallida
             throw new HttpResponseException(response()->json([
                 'code' => 401,
-                'message' => 'Credenciales no válidas',
+                'message' => 'Credenciales no válidas o usuario no verificado.'
+            ], 401));
+        }
+        // Verificar si el usuario está verificado
+        $user = auth()->user();
+        if (!$user->is_verified) {
+            throw new HttpResponseException(response()->json([
+                'code' => 401,
+                'message' => 'El correo no ha sido verificado.'
             ], 401));
         }
 
@@ -56,7 +83,11 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json([
+            'code' => 200,
+            'message' => 'Solicitud exitosa',
+            'data' => auth()->user(),
+        ], 200);
     }
 
     /**
@@ -68,14 +99,26 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Se ha cerrado sesión.']);
     }
     protected function respondWithToken($token)
     {
         return response()->json([
+            'code' => 200,
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            'data' => auth()->user()
         ]);
+    }
+
+    public function verify($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+        }
+        $user->markEmailAsVerified();
+        $user->update(['is_verified' => true]);
+        return redirect('/')->with('verified', true);
     }
 }

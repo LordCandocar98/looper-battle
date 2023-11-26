@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends \TCG\Voyager\Models\User implements JWTSubject
+class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,6 +21,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject
         'name',
         'email',
         'password',
+        'is_verified'
     ];
 
     /**
