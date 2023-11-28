@@ -31,7 +31,6 @@ services:
     volumes:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
-      - ./docker-compose/nginx/.htpasswd:/etc/nginx/.htpasswd:ro
     networks:
       - looperbattle
 
