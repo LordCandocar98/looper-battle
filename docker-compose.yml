@@ -18,8 +18,6 @@ services:
     networks:
       - looperbattle
     user: root
-    depends_on:
-      - mail
 
   nginx:
     image: nginx:alpine
@@ -27,7 +25,6 @@ services:
     restart: unless-stopped
     ports:
       - 81:80
-      - 444:443
     volumes:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
@@ -66,14 +63,6 @@ services:
     networks:
       - looperbattle
 
-  mail:
-    image: catatnight/postfix
-    container_name: looperbattle-mail
-    restart: unless-stopped
-    environment:
-        - MAIL_DOMAIN=45.132.240.186
-    networks:
-        - looperbattle
 volumes:
   postgres_data:
   pgadmin_data:
@@ -81,4 +70,3 @@ volumes:
 networks:
   looperbattle:
     driver: bridge
-
