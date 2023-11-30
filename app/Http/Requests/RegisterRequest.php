@@ -18,6 +18,8 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'nickname' => 'required|string|unique:users,nickname|max:20',
+            'birthday_date' => 'required|date_format:Y-m-d',
             'email' => 'required|string|email|unique:users',
             'password' => [
                 'required',

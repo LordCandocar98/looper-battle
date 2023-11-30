@@ -22,6 +22,8 @@ class AuthController extends Controller
             DB::beginTransaction();
             $user = User::create([
                 'name' => $request->get('name'),
+                'nickname' => $request->get('nickname'),
+                'birthday_date' => $request->get('birthday_date'),
                 'email' => $request->get('email'),
                 'password' => bcrypt($request->get('password')),
                 'role_id' => 2,
@@ -45,13 +47,17 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
-
+        $credentials = $request->only('password');
+        if (filter_var($request->input('email'), FILTER_VALIDATE_EMAIL)) {
+            $credentials['email'] = $request->input('email');
+        } else {
+            $credentials['nickname'] = $request->input('email');
+        }
         if (!$token = JWTAuth::attempt($credentials)) {
             // Autenticación fallida
             throw new HttpResponseException(response()->json([
                 'code' => 401,
-                'message' => 'Credenciales no válidas o usuario no verificado.'
+                'message' => 'Credenciales inválidas.'
             ], 401));
         }
         // Verificar si el usuario está verificado
@@ -97,6 +103,8 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        JWTAuth::invalidate(JWTAuth::getToken(), true);
+
         auth()->logout();
 
         return response()->json(['message' => 'Se ha cerrado sesión.']);

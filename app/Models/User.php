@@ -19,6 +19,8 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
      */
     protected $fillable = [
         'name',
+        'nickname',
+        'birthday_date',
         'email',
         'password',
         'is_verified'

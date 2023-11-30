@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_verified')->default(false);
+            $table->string('nickname', 20)->unique()->after('name')->nullable();
+            $table->date('birthday_date')->after('nickname')->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_verified');
+            $table->dropColumn('nickname');
+            $table->dropColumn('birthday_date');
         });
     }
 };
