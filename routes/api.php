@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +29,15 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('me', [AuthController::class, 'me']);
+    Route::controller(MatchController::class)
+        // ->prefix('matches')
+        ->group(
+            function () {
+                Route::get('matches', 'index');
+                Route::get('matches/latest', 'showLatestMatches');
+                Route::post('matches', 'store');
+                Route::put('matches/{id}', 'update');
+                Route::delete('matches/{id}', 'destroy');
+            }
+        );
 });

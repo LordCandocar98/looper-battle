@@ -53,4 +53,12 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     {
         return [];
     }
+
+    /**
+     * Obtener las partidas asociadas al usuario.
+     */
+    public function matches()
+    {
+        return $this->hasMany(GameMatch::class, 'owner_id');
+    }
 }

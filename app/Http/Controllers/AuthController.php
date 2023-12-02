@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterRequest;
@@ -41,6 +42,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Error al registrar el usuario.'], 500);
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error($e->getLine() . ' - ' . $e->getMessage() . ' - ' . $e->getFile());
             return response()->json(['error' => 'Error al procesar la solicitud.'], 500);
         }
     }
