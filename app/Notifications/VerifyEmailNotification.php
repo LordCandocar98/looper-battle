@@ -45,10 +45,19 @@ class VerifyEmailNotification extends Notification
         $verificationUrl = url("/verify/{$this->user->id}");
 
         return (new MailMessage)
-            ->subject('Verificación de correo electrónico')
-            ->line('Haz clic en el siguiente enlace para verificar tu correo electrónico.')
-            ->action('Verificar Correo Electrónico', $verificationUrl)
-            ->line('Gracias por registrarte en nuestra aplicación!');
+        ->subject('Verificación de Correo Electrónico')
+        ->greeting('¡Hola, ' . $this->user->nickname . '!')
+        ->line('Gracias por registrarte en nuestra aplicación. Estamos emocionados de tenerte a bordo.')
+        ->line('Por favor, haz clic en el siguiente enlace para verificar tu correo electrónico.')
+        ->action('Verificar Correo Electrónico', $verificationUrl)
+        ->line('Una vez que verifiques tu correo, podrás disfrutar plenamente de todas las funciones de nuestra aplicación.')
+        ->line('¡Diviértete jugando y gracias por formar parte de nuestra comunidad!')
+        ->salutation('¡Saludos, Atentamente: el Equipo de ' . config('app.name'))
+        ->markdown('vendor.notifications.email', [
+            'actionUrl' => $verificationUrl,
+            'actionText' => 'Verificar Correo Electrónico',
+            'alternativeText' => 'Si tienes problemas al hacer clic en el botón de verificación, copia y pega la siguiente URL en tu navegador: ' . $verificationUrl,
+        ]);
     }
 
     /**

@@ -14,13 +14,17 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
+});
+
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get('/verified-email', function () {
+    return view('verified-email');
 });
 
 Route::get('/verify/{id}', [AuthController::class, 'verify'])->name('verification.verify');
