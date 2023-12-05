@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\PlayerScoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,17 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('matches', 'store');
                 Route::put('matches/{id}', 'update');
                 Route::delete('matches/{id}', 'destroy');
+            }
+        );
+    Route::controller(PlayerScoreController::class)
+        // ->prefix('scores')
+        ->group(
+            function () {
+                Route::get('scores', 'index');
+                Route::get('scores/{id}', 'show');
+                Route::post('scores', 'store');
+                Route::put('scores/{id}', 'update');
+                Route::delete('scores/{id}', 'destroy');
             }
         );
 });

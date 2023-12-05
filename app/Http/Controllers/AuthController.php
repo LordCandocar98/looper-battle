@@ -91,10 +91,24 @@ class AuthController extends Controller
      */
     public function me()
     {
+        $user = auth()->user()
+            ->loadSum('playerScores', 'points')
+            ->loadSum('playerScores', 'kills')
+            ->loadSum('playerScores', 'deaths');
+
+        $totalPoints = $user->player_scores_sum_points ?? 0;
+        $totalKills = $user->player_scores_sum_kills ?? 0;
+        $totalDeaths = $user->player_scores_sum_deaths ?? 0;
+
         return response()->json([
             'code' => 200,
             'message' => 'Solicitud exitosa',
-            'data' => auth()->user(),
+            'data' => [
+                'user' => $user,
+                'total_points' => $totalPoints,
+                'total_kills' => $totalKills,
+                'total_deaths' => $totalDeaths,
+            ],
         ], 200);
     }
 
@@ -129,6 +143,6 @@ class AuthController extends Controller
         }
         $user->markEmailAsVerified();
         $user->update(['is_verified' => true]);
-        return redirect('/')->with('verified', true);
+        return redirect('/verified-email')->with('verified', true);
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Matches;
+namespace App\Http\Requests\PlayerScores;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreMatchRequest extends FormRequest
+class StorePlayerScoreRequest extends FormRequest
 {
     /**
      * Determina si el usuario está autorizado para realizar esta solicitud.
@@ -26,16 +27,15 @@ class StoreMatchRequest extends FormRequest
     public function rules()
     {
         return [
-            'room_name' => 'required|string|max:50',
-            'privacy' => 'required|in:public,private',
-            'map' => 'required|string|max:50',
-            'game_mode' => 'required|in:free_for_all,team_deathmatch,capture_the_flag',
-            'max_players' => 'required|integer',
-            'room_time_limit' => 'required|integer',
-            'game_mode_goal' => 'required|integer',
-            'bots' => 'required|boolean',
-            'pay_tournament' => 'required|boolean',
-            'payment_code' => 'nullable|string',
+            'match_id' => 'required|exists:matches,id',
+            'points' => 'required|integer',
+            'kills' => 'required|integer',
+            'deaths' => 'required|integer',
+            'match_unique' => Rule::unique('players_scores', 'player_id')
+                ->where(function ($query) {
+                    return $query->where('match_id', $this->input('match_id'));
+                })
+                ->ignore($this->route('players_score')), // Ignorar el registro actual al actualizar
         ];
     }
     protected function failedValidation(Validator $validator)

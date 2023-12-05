@@ -23,6 +23,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
         'birthday_date',
         'email',
         'password',
+        'profile_icon',
         'is_verified'
     ];
 
@@ -60,5 +61,21 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     public function matches()
     {
         return $this->hasMany(GameMatch::class, 'owner_id');
+    }
+
+    /**
+     * Obtener todos los scores de las partidas
+     */
+    public function playerScores()
+    {
+        return $this->hasMany(PlayerScore::class, 'player_id');
+    }
+
+    /**
+     * Obtener puntaje total del jugador
+     */
+    public function getTotalScore()
+    {
+        return $this->playerScores->sum('points');
     }
 }

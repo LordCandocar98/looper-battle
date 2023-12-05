@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_verified')->default(false);
+            $table->integer('profile_icon')->default(0);
         });
     }
 

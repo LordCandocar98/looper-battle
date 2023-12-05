@@ -25,6 +25,7 @@ class MatchController extends Controller
     {
         $matches = GameMatch::with(['owner'])->get();
         return Response::json([
+            'code' => 200,
             'message' => 'Solicitud exitosa.',
             'data' => $matches
         ], 200);
@@ -43,6 +44,7 @@ class MatchController extends Controller
             ->take(20)
             ->get();
         return Response::json([
+            'code' => 200,
             'message' => 'Solicitud exitosa.',
             'data' => $matches
         ], 200);
@@ -59,30 +61,21 @@ class MatchController extends Controller
         try {
             DB::beginTransaction();
 
-            $accessCode = Str::random(8);
-
             $owner_id = auth()->user()->id;
 
-            $match = new GameMatch([
+            $match = GameMatch::create([
                 'owner_id' => $owner_id,
                 'room_name' => $request->input('room_name'),
-                'access_code' => $accessCode,
                 'privacy' => $request->input('privacy'),
                 'map' => $request->input('map'),
                 'game_mode' => $request->input('game_mode'),
                 'max_players' => $request->input('max_players'),
                 'room_time_limit' => $request->input('room_time_limit'),
                 'game_mode_goal' => $request->input('game_mode_goal'),
-                'team_selection' => $request->input('team_selection'),
-                'friendly_fire' => $request->input('friendly_fire'),
                 'bots' => $request->input('bots'),
                 'pay_tournament' => $request->input('pay_tournament'),
                 'payment_code' => $request->input('payment_code'),
-                'status' => $request->input('status'),
-                'date' => date('Y-m-d'),
             ]);
-
-            $match->save();
 
             DB::commit();
 
