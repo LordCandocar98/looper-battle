@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\PlayerScoreController;
@@ -30,6 +31,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('me', [AuthController::class, 'me']);
+    Route::post('me/update', [UserController::class, 'updateUser']);
     Route::controller(MatchController::class)
         // ->prefix('matches')
         ->group(

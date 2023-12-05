@@ -4,9 +4,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PlayerScores\StorePlayerScoreRequest;
 use App\Models\PlayerScore;
 use Illuminate\Http\Request;
+use App\Http\Requests\PlayerScores\StorePlayerScoreRequest;
 
 class PlayerScoreController extends Controller
 {
