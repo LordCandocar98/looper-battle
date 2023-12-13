@@ -96,18 +96,11 @@ class AuthController extends Controller
             ->loadSum('playerScores', 'kills')
             ->loadSum('playerScores', 'deaths');
 
-        $totalPoints = $user->player_scores_sum_points ?? 0;
-        $totalKills = $user->player_scores_sum_kills ?? 0;
-        $totalDeaths = $user->player_scores_sum_deaths ?? 0;
-
         return response()->json([
             'code' => 200,
             'message' => 'Solicitud exitosa',
             'data' => [
                 'user' => $user,
-                'total_points' => $totalPoints,
-                'total_kills' => $totalKills,
-                'total_deaths' => $totalDeaths,
             ],
         ], 200);
     }
