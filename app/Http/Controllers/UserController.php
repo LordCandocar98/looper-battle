@@ -51,8 +51,8 @@ class UserController extends Controller
      */
     public function showLatestMatchesDetail()
     {
-        $owner_id = auth()->user()->id;
-        $playedMatches = PlayerScore::where('player_id', $$owner_id)
+        $player_id = auth()->user()->id;
+        $playedMatches = PlayerScore::where('player_id', $player_id)
             ->with(['gameMatch.owner', 'gameMatch.playerScores.player'])
             ->latest()
             ->take(20)
