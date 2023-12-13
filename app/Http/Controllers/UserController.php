@@ -42,6 +42,29 @@ class UserController extends Controller
         }
     }
 
+
+    /**
+     * Obtiene las últimas partidas del usuario actual
+     * con el detalle de los puntos y jugadores
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showLatestMatchesDetail()
+    {
+        $owner_id = auth()->user()->id;
+        $playedMatches = PlayerScore::where('player_id', $$owner_id)
+            ->with(['gameMatch.owner', 'gameMatch.playerScores.player'])
+            ->latest()
+            ->take(20)
+            ->get()
+            ->pluck('gameMatch')
+            ->unique('id');
+        return response()->json([
+            'code' => 200,
+            'message' => 'Solicitud exitosa.',
+            'data' => $playedMatches
+        ], 200);
+    }
     public function destroy($id)
     {
         $score = PlayerScore::find($id);

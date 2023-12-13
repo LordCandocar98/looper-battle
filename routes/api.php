@@ -31,7 +31,14 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('me', [AuthController::class, 'me']);
-    Route::post('me/update', [UserController::class, 'updateUser']);
+    Route::controller(UserController::class)
+        ->prefix('me')
+        ->group(
+            function () {
+                Route::post('/update', 'updateUser');
+                Route::get('/show-latest-matches', 'showLatestMatchesDetail');
+            }
+        );
     Route::controller(MatchController::class)
         // ->prefix('matches')
         ->group(
