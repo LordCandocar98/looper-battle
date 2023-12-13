@@ -24,6 +24,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
         'email',
         'password',
         'profile_icon',
+        'default_settings',
         'is_verified'
     ];
 

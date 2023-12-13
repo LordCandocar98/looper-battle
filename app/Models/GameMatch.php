@@ -18,4 +18,12 @@ class GameMatch extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    /**
+     * Obtiene al propietario de la partida.
+     */
+    public function playerScores()
+    {
+        return $this->hasMany(PlayerScore::class, 'match_id','id');
+    }
 }
