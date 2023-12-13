@@ -53,7 +53,12 @@ class UserController extends Controller
     {
         $player_id = auth()->user()->id;
         $playedMatches = PlayerScore::where('player_id', $player_id)
-            ->with(['gameMatch', 'gameMatch.playerScores.player'])
+            ->with([
+                'gameMatch',
+                'gameMatch.playerScores.player' => function ($query) {
+                    $query->select('id', 'nickname', 'profile_icon');
+                }
+            ])
             ->latest()
             ->take(20)
             ->get()
