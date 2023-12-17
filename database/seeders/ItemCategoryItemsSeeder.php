@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ItemCategoryItem;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class ItemCategorieItemsSeeder extends Seeder
+class ItemCategoryItemsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -64,5 +65,8 @@ class ItemCategorieItemsSeeder extends Seeder
                 'item_category_id' => 2,
             ],
         ];
+        foreach ($items as $item) {
+            ItemCategoryItem::create($item);
+        }
     }
 }
