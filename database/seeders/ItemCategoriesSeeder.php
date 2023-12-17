@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\ItemCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ItemCategoriesSeeder extends Seeder
 {
