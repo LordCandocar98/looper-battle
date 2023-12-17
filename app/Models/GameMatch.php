@@ -24,6 +24,12 @@ class GameMatch extends Model
      */
     public function playerScores()
     {
-        return $this->hasMany(PlayerScore::class, 'match_id','id');
+        return $this->hasMany(PlayerScore::class, 'match_id', 'id');
+    }
+    public function players()
+    {
+        return $this->belongsToMany(User::class, 'players_scores', 'match_id', 'player_id')
+            ->withPivot(['points', 'kills', 'deaths', 'assists'])
+            ->using(PlayerScore::class);
     }
 }

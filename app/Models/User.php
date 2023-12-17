@@ -59,7 +59,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     /**
      * Obtener las partidas asociadas al usuario.
      */
-    public function matches()
+    public function ownerMatches()
     {
         return $this->hasMany(GameMatch::class, 'owner_id');
     }
@@ -78,5 +78,11 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     public function getTotalScore()
     {
         return $this->playerScores->sum('points');
+    }
+    public function matches()
+    {
+        return $this->belongsToMany(GameMatch::class, 'players_scores', 'player_id', 'match_id')
+            ->withPivot(['points', 'kills', 'deaths', 'assists'])
+            ->using(PlayerScore::class);
     }
 }
