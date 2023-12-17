@@ -9,7 +9,6 @@ class PlayerScore extends Model
 {
     use HasFactory;
     protected $table = 'players_scores';
-    protected $primaryKey = ['player_id', 'match_id'];
     protected $guarded = [];
 
     /**
