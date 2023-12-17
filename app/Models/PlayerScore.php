@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PlayerScore extends Model
 {
     use HasFactory;
     protected $table = 'players_scores';
+    protected $primaryKey = ['player_id', 'match_id'];
     protected $guarded = [];
 
     /**

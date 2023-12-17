@@ -82,7 +82,8 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     public function matches()
     {
         return $this->belongsToMany(GameMatch::class, 'players_scores', 'player_id', 'match_id')
-            ->withPivot(['points', 'kills', 'deaths', 'assists'])
-            ->using(PlayerScore::class);
+            ->using(PlayerScore::class) // Si estás utilizando un modelo personalizado para el pivote
+            ->withPivot(['points', 'kills', 'deaths'])
+            ->withTimestamps();
     }
 }
