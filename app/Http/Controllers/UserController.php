@@ -42,7 +42,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Obtiene las últimas partidas del usuario actual
      * con el detalle de los puntos y jugadores
@@ -70,6 +69,31 @@ class UserController extends Controller
             'data' => $playedMatches
         ], 200);
     }
+
+    /**
+     * Obtiene el top 10 de jugadores con mayor puntaje
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showTopTenPlayers()
+    {
+        $topPlayers = PlayerScore::select('player_id', DB::raw('SUM(points) as total_score'))
+            ->groupBy('player_id')
+            ->orderByDesc('total_score')
+            ->take(10)
+            ->get();
+
+        $topPlayers = $topPlayers->map(function ($item) {
+            $item->player = User::select('id', 'name', 'nickname', 'profile_icon')->find($item->player_id);
+            return $item;
+        });
+        return response()->json([
+            'code' => 200,
+            'message' => 'Solicitud exitosa.',
+            'data' => $topPlayers
+        ], 200);
+    }
+
     public function destroy($id)
     {
         $score = PlayerScore::find($id);

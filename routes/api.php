@@ -37,6 +37,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
             function () {
                 Route::post('/update', 'updateUser');
                 Route::get('/show-latest-matches', 'showLatestMatchesDetail');
+                Route::get('/show-top-ten-players', 'showTopTenPlayers');
             }
         );
     Route::controller(MatchController::class)
