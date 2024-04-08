@@ -12,7 +12,7 @@ class PlayerScoreController extends Controller
 {
     public function index()
     {
-        $scores = PlayerScore::with(['player', 'gameMatch'])->get();
+        $scores = PlayerScore::with(['player', 'gameMatch', 'team'])->get();
         return response()->json([
             'code' => 200,
             'message' => 'Solicitud exitosa.',
@@ -48,6 +48,7 @@ class PlayerScoreController extends Controller
         $score = PlayerScore::create([
             'player_id' => auth()->user()->id,
             'match_id' => $request->input('match_id'),
+            'team_id' => $request->input('team_id') ?? 0,
             'points' => $request->input('points'),
             'kills' => $request->input('kills'),
             'deaths' => $request->input('deaths'),
