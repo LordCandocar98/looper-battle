@@ -77,7 +77,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
      */
     public function coins()
     {
-        return $this->hasMany(Coin::class, 'player_id');
+        return $this->hasOne(Coin::class, 'player_id');
     }
 
     /**

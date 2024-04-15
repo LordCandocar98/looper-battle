@@ -12,6 +12,6 @@ class Coin extends Model
     protected $guarded = [];
     public function player()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'player_id');
     }
 }
