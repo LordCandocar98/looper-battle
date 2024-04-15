@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('coin_rewards', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->unique();
             $table->integer('target_points');
             $table->integer('coin_amount');
-            $table->date('start_date')->nullable();
+            $table->date('start_date');
             $table->timestamps();
         });
     }
