@@ -73,6 +73,14 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     }
 
     /**
+     * Obtener el monto total de de coins del usuario
+     */
+    public function coins()
+    {
+        return $this->hasMany(Coin::class, 'player_id');
+    }
+
+    /**
      * Obtener puntaje total del jugador
      */
     public function getTotalScore()
