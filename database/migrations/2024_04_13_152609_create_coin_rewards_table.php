@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('target_points');
             $table->integer('coin_amount');
+            $table->date('start_date')->nullable();
             $table->timestamps();
         });
     }
