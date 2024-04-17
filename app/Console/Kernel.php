@@ -15,6 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('rewards:process-weekly')->weekly()->saturdays()->at('00:00');
+        // $schedule->command('rewards:process-weekly')->everyMinute();
         // $schedule->command('inspire')->hourly();
     }
 

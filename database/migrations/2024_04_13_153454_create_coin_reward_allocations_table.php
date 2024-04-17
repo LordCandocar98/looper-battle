@@ -17,10 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('player_id');
             $table->unsignedBigInteger('coin_reward_id');
-            $table->date('week_start');
             $table->timestamps();
 
-            $table->unique(['player_id', 'coin_reward_id', 'week_start']);
+            $table->unique(['player_id', 'coin_reward_id']);
 
             $table->foreign('player_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('coin_reward_id')->references('id')->on('coin_rewards')->onDelete('cascade');

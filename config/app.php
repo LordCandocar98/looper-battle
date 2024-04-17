@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'America/Bogota',
+    'timezone' => 'America/Port-au-Prince',
 
     /*
     |--------------------------------------------------------------------------
