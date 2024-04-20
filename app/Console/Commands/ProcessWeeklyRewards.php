@@ -38,8 +38,9 @@ class ProcessWeeklyRewards extends Command
     public function handle()
     {
         // Obtener todas las recompensas activas
-        $activeRewards = CoinReward::where('status', true)->get();
-
+        $activeRewards = CoinReward::where('status', true)
+            ->whereDate('end_date', '<=', Carbon::now()->toDateString())
+            ->get();
         foreach ($activeRewards as $reward) {
             // Obtener el rango de fechas para esta recompensa
             $startDate = Carbon::parse($reward->start_date)->startOfDay();
