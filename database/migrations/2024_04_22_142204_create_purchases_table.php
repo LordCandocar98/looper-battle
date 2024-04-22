@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('player_id');
             $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('purchase_type_id');
-            $table->timestamps();
 
             $table->foreign('player_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('item_id')->references('id')->on('rewards')->onDelete('cascade')->onUpdate('cascade');
