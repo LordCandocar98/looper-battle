@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\RewardController;
 use App\Http\Controllers\PlayerScoreController;
 
 /*
@@ -60,6 +61,13 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('scores', 'store');
                 Route::put('scores/{id}', 'update');
                 Route::delete('scores/{id}', 'destroy');
+            }
+        );
+    Route::controller(RewardController::class)
+        ->prefix('rewards')
+        ->group(
+            function () {
+                Route::get('coins', 'coinReward');
             }
         );
 });

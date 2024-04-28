@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Reward;
+use App\Models\PlayerScore;
+use App\Observers\RewardObserver;
+use App\Observers\PlayerScoreObserver;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -27,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        PlayerScore::observe(PlayerScoreObserver::class);
+        Reward::observe(RewardObserver::class);
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->unsignedBigInteger('item_id');
             $table->integer('target_score');
+            $table->boolean('status')->default(true);
             $table->timestamps();
 
             $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade')->onUpdate('cascade');
