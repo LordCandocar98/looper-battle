@@ -10,4 +10,8 @@ class SpecialCode extends Model
     use HasFactory;
     protected $table = 'special_codes';
     protected $guarded = [];
+    public function assignment()
+    {
+        return $this->hasOne(CodeAssignment::class, 'code', 'code');
+    }
 }

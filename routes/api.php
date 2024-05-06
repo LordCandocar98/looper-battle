@@ -68,6 +68,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
         ->group(
             function () {
                 Route::get('coins', 'coinReward');
+                Route::post('redeem-code', 'redeemCode');
             }
         );
 });
