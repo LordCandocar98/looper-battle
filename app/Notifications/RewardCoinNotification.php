@@ -54,7 +54,9 @@ class RewardCoinNotification extends Notification implements ShouldQueue
             ->line('¡Felicidades! Has recibido una recompensa de ' . $this->coinAmount . ' looper coins.')
             ->line('Podrás visualizar tu recompensa en el juego.')
             ->salutation('¡Saludos, Atentamente: el Equipo de ' . config('app.name'))
-            ->markdown('vendor.notifications.email');
+            ->markdown('vendor.notifications.email', [
+                'banner' => url('storage/' . setting('admin.bannerlooper'))
+            ]);
     }
 
     /**

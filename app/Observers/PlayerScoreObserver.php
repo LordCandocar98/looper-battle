@@ -8,8 +8,8 @@ use App\Models\Reward;
 use App\Models\PlayerScore;
 use App\Models\SpecialCode;
 use App\Models\CodeAssignment;
-use App\Notifications\RewardNotification;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\RewardNotification;
 
 class PlayerScoreObserver
 {
@@ -75,30 +75,28 @@ class PlayerScoreObserver
                 ->sum('points');
 
             // Obtener las recompensas que el jugador ha alcanzado con su puntaje total
-            $rewards = Reward::where('target_score', '<=', $totalPoints)->where('status', true)->get();
+            $rewards = Reward::with(['item'])->where('target_score', '<=', $totalPoints)->where('status', true)->get();
+            $user = User::find($playerScore->player_id);
             foreach ($rewards as $reward) {
-                $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
-                if ($specialCode) {
-                    $user = User::find($playerScore->player_id);
-                    $assignment = CodeAssignment::create([
-                        'code' => $specialCode->code,
-                        'player_id' => $user->id,
-                        'reward_id' => $reward->id,
-                    ]);
+                $existingAssignment = CodeAssignment::where('player_id', $user->id)
+                    ->where('reward_id', $reward->id)
+                    ->exists();
 
-                    // Eliminar el código especial de la tabla de códigos especiales
-                    $specialCode->delete();
-                    $user->notify(new RewardNotification($specialCode->code, $user));
-
-                    // Antigua lógica para asignar a un usuario recompensas
-
-                    // $user->grantReward($reward->id);
-                    // $user->purchaseItem($reward->item_id, 1);
-                } else {
-                    Log::info('Códigos no disponibles para asignar al jugador');
+                if (!$existingAssignment) {
+                    $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
+                    if ($specialCode) {
+                        $assignment = CodeAssignment::create([
+                            'code' => $specialCode->code,
+                            'player_id' => $user->id,
+                            'reward_id' => $reward->id,
+                        ]);
+                        // Eliminar el código especial de la tabla de códigos especiales
+                        $specialCode->delete();
+                        $user->notify(new RewardNotification($specialCode->code, $user, $reward->item));
+                    } else {
+                        Log::info('No hay código disponible para la recompensa "' . $reward->title . '" asignada a: ' . $user->nickname);
+                    }
                 }
-                // $user->grantReward($reward->id);
-                // $user->purchaseItem($reward->item_id, 1);
             }
         } catch (Exception $e) {
             Log::error($e->getLine() . ' - ' . $e->getMessage() . ' - ' . $e->getFile());

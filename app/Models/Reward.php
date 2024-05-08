@@ -10,4 +10,8 @@ class Reward extends Model
     use HasFactory;
     protected $table = 'rewards';
     protected $guarded = [];
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
 }

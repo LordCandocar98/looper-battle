@@ -8,9 +8,9 @@ use App\Models\Reward;
 use App\Models\SpecialCode;
 use App\Models\PlayerScore;
 use App\Models\CodeAssignment;
-use App\Notifications\RewardNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\RewardNotification;
 
 class RewardObserver
 {
@@ -78,25 +78,24 @@ class RewardObserver
                     ->havingRaw('SUM(points) >= ?', [$reward->target_score])
                     ->get();
                 foreach ($qualifiedPlayers as $player) {
-                    $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
-                    if ($specialCode) {
-                        $user = User::find($player->player_id);
-                        $assignment = CodeAssignment::create([
-                            'code' => $specialCode->code,
-                            'player_id' => $user->id,
-                            'reward_id' => $reward->id,
-                        ]);
-
-                        // Eliminar el código especial de la tabla de códigos especiales
-                        $specialCode->delete();
-                        $user->notify(new RewardNotification($specialCode->code, $user));
-
-                        // Antigua lógica para asignar a un usuario recompensas
-
-                        // $user->grantReward($reward->id);
-                        // $user->purchaseItem($reward->item_id, 1);
-                    } else {
-                        Log::info('Sin códigos disponibles para recompensa automatica.');
+                    $user = User::find($player->player_id);
+                    $existingAssignment = CodeAssignment::where('player_id', $user->id)
+                        ->where('reward_id', $reward->id)
+                        ->exists();
+                    if (!$existingAssignment) {
+                        $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
+                        if ($specialCode) {
+                            $assignment = CodeAssignment::create([
+                                'code' => $specialCode->code,
+                                'player_id' => $user->id,
+                                'reward_id' => $reward->id,
+                            ]);
+                            // Eliminar el código especial de la tabla de códigos especiales
+                            $specialCode->delete();
+                            $user->notify(new RewardNotification($specialCode->code, $user, $reward->item));
+                        } else {
+                            Log::info('Sin código disponible para la recompensa "' . $reward->title . '" para el Jugador: ' . $user->nickname);
+                        }
                     }
                 }
             }

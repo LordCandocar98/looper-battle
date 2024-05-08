@@ -11,17 +11,19 @@ class RewardNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $rewardCode;
     protected $user;
+    protected $item;
+    protected $rewardCode;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($rewardCode, $user)
+    public function __construct($rewardCode, $user, $item)
     {
-        $this->rewardCode = $rewardCode;
         $this->user = $user;
+        $this->item = $item;
+        $this->rewardCode = $rewardCode;
     }
 
     /**
@@ -52,9 +54,11 @@ class RewardNotification extends Notification implements ShouldQueue
             ->subject('¡Has recibido un código de recompensa!')
             ->greeting('¡Hola, ' . $this->user->nickname . '!')
             ->line('¡Felicidades! El código es: ' . $this->rewardCode)
-            ->line('Podrás canjearlo dentro del juego para reclamar tu artículo de recompensa.')
+            ->line('Podrás canjearlo dentro del juego, para reclamar tu artículo (' . $this->item->name . ').')
             ->salutation('¡Saludos, Atentamente: el Equipo de ' . config('app.name'))
-            ->markdown('vendor.notifications.email');
+            ->markdown('vendor.notifications.email', [
+                'banner' => url('storage/' . $this->item->image)
+            ]);
     }
 
     /**
