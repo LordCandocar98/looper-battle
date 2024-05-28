@@ -14,4 +14,12 @@ class SpecialCode extends Model
     {
         return $this->hasOne(CodeAssignment::class, 'code', 'code');
     }
+    public function purchaseType()
+    {
+        return $this->belongsTo(PurchaseType::class, 'purchase_type_id');
+    }
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'item_id');
+    }
 }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\PlayerScoreController;
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['guest']], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+    Route::get('items/list', [ItemController::class, 'list'])->name('items.list');
 });
 
 Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
@@ -69,6 +71,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
             function () {
                 Route::get('coins', 'coinReward');
                 Route::post('redeem-code', 'redeemCode');
+                // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
             }
         );
 });

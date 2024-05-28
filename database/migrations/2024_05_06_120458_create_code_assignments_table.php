@@ -15,13 +15,16 @@ return new class extends Migration
     {
         Schema::create('code_assignments', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->boolean('status')->default(true);
+            $table->string('code');
+            $table->boolean('paid')->default(false);
+            $table->boolean('used')->default(false);
             $table->unsignedBigInteger('player_id');
-            $table->unsignedBigInteger('reward_id');
+            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('purchase_type_id');
 
             $table->foreign('player_id')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');
-            $table->foreign('reward_id')->references('id')->on('rewards')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreign('purchase_type_id')->references('id')->on('purchase_types')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

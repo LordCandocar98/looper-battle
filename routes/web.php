@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RewardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +21,8 @@ use App\Http\Controllers\AuthController;
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
+    Route::post('generate-codes', [RewardController::class, 'generateCodes'])->name('special-codes.generate');
+    Route::get('/codes', [ItemController::class, 'index'])->name('codes.index');
 });
 
 Route::get('/', function () {

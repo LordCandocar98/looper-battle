@@ -5,6 +5,7 @@ namespace App\Observers;
 use Exception;
 use App\Models\User;
 use App\Models\Reward;
+use App\Models\Purchase;
 use App\Models\PlayerScore;
 use App\Models\SpecialCode;
 use App\Models\CodeAssignment;
@@ -73,22 +74,32 @@ class PlayerScoreObserver
 
             $totalPoints = PlayerScore::where('player_id', $playerScore->player_id)
                 ->sum('points');
+            // Obtener los item_ids que el jugador ya ha adquirido
+            $purchasedItemIds = Purchase::where('player_id', $playerScore->player_id)
+                ->pluck('item_id');
 
-            // Obtener las recompensas que el jugador ha alcanzado con su puntaje total
-            $rewards = Reward::with(['item'])->where('target_score', '<=', $totalPoints)->where('status', true)->get();
+            // Obtener las recompensas que el jugador ha alcanzado con su puntaje total, excluyendo los ítems ya adquiridos
+            $rewards = Reward::with(['item'])
+                ->where('target_score', '<=', $totalPoints)
+                ->where('status', true)
+                ->whereNotIn('item_id', $purchasedItemIds)
+                ->get();
             $user = User::find($playerScore->player_id);
             foreach ($rewards as $reward) {
                 $existingAssignment = CodeAssignment::where('player_id', $user->id)
-                    ->where('reward_id', $reward->id)
+                    ->where('item_id', $reward->item_id)
                     ->exists();
 
                 if (!$existingAssignment) {
-                    $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
+                    $specialCode = SpecialCode::whereDoesntHave('assignment', function ($query) {
+                        $query->where('used', false);
+                    })->where('item_id', $reward->item_id)
+                        ->where('purchase_type_id', 1)->first();
                     if ($specialCode) {
                         $assignment = CodeAssignment::create([
                             'code' => $specialCode->code,
                             'player_id' => $user->id,
-                            'reward_id' => $reward->id,
+                            'item_id' => $reward->item_id,
                         ]);
                         // Eliminar el código especial de la tabla de códigos especiales
                         $specialCode->delete();

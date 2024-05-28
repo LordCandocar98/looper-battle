@@ -14,8 +14,8 @@ class CodeAssignment extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function reward()
+    public function item()
     {
-        return $this->belongsTo(Reward::class);
+        return $this->belongsTo(Item::class);
     }
 }

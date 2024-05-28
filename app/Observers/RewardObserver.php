@@ -80,15 +80,18 @@ class RewardObserver
                 foreach ($qualifiedPlayers as $player) {
                     $user = User::find($player->player_id);
                     $existingAssignment = CodeAssignment::where('player_id', $user->id)
-                        ->where('reward_id', $reward->id)
+                        ->where('item_id', $reward->item_id)
                         ->exists();
                     if (!$existingAssignment) {
-                        $specialCode = SpecialCode::whereDoesntHave('assignment')->where('value', 0)->first();
+                        $specialCode = SpecialCode::whereDoesntHave('assignment', function ($query) {
+                            $query->where('used', false);
+                        })->where('item_id', $reward->item_id)
+                            ->where('purchase_type_id', 1)->first();
                         if ($specialCode) {
                             $assignment = CodeAssignment::create([
                                 'code' => $specialCode->code,
                                 'player_id' => $user->id,
-                                'reward_id' => $reward->id,
+                                'item_id' => $reward->item_id,
                             ]);
                             // Eliminar el código especial de la tabla de códigos especiales
                             $specialCode->delete();

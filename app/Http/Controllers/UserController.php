@@ -7,13 +7,23 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use App\Models\PlayerScore;
+use App\Models\SpecialCode;
 use Illuminate\Http\Request;
+use App\Models\CodeAssignment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
+    public function list(Request $request)
+    {
+        $search = $request->input('q');
+        $users = User::where('nickname', 'LIKE', "%$search%")->get();
+
+        return response()->json($users);
+    }
+
     public function updateUser(Request $request)
     {
         try {
