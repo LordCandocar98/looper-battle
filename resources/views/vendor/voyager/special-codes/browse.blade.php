@@ -32,44 +32,6 @@
 @stop
 
 @section('javascript')
-    <!-- Incluye jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Incluye Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <script>
-        $(document).ready(function() {
-            console.log("Document ready!"); // Log para verificar que el documento está listo
-
-            // Initialize Select2 for item selection on modal show
-            $('#generateCodesModal').on('show.bs.modal', function() {
-                console.log("Modal opened!"); // Log para verificar que el modal se abre
-
-                $('#item_select').select2({
-                    ajax: {
-                        url: '{{ route('voyager.items.list') }}',
-                        dataType: 'json',
-                        delay: 250,
-                        processResults: function(data) {
-                            console.log(data); // Log para verificar los datos recibidos
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        text: item.name,
-                                        id: item.id
-                                    }
-                                })
-                            };
-                        },
-                        cache: true
-                    },
-                    minimumInputLength: 1,
-                    dropdownParent: $('#generateCodesModal')
-                });
-            });
-        });
-    </script>
 @stop
 
 <!-- Modal for Generating Codes -->
