@@ -92,6 +92,7 @@ class RewardObserver
                                 'code' => $specialCode->code,
                                 'player_id' => $user->id,
                                 'item_id' => $reward->item_id,
+                                'purchase_type_id' => $specialCode->purchase_type_id,
                             ]);
                             // Eliminar el código especial de la tabla de códigos especiales
                             $specialCode->delete();
