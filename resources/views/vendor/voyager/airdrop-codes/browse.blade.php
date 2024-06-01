@@ -4,9 +4,9 @@
 
 @section('page_header')
     <h1 class="page-title">
-        <i class="voyager-certificate"></i> Códigos Especiales
+        <i class="voyager-certificate"></i> Códigos Aidrop
     </h1>
-    <a href="{{ url('/admin/codes') }}" class="btn btn-success">
+    <a href="{{ url('/admin/airdrop/generate-codes') }}" class="btn btn-success">
         <i class="voyager-plus"></i> Generate Codes
     </a>
     @can('delete', app($dataType->model_name))
