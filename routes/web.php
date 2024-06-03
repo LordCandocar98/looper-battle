@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RewardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\Aidrop\AidropCodeController;
 
 /*
@@ -22,10 +23,13 @@ use App\Http\Controllers\Aidrop\AidropCodeController;
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
+
+    Route::get('/admin/{slug}/export', [ExportController::class, 'export'])->name('voyager.export');
+
     Route::post('generate-codes', [RewardController::class, 'generateCodes'])->name('special-codes.generate');
     Route::get('/codes', [ItemController::class, 'index'])->name('codes.index');
 
-    
+
     Route::post('/airdrop/generate-codes', [AidropCodeController::class, 'generate'])->name('airdrop-codes.generate');
     Route::get('/airdrop/generate-codes', [AidropCodeController::class, 'index'])->name('aidrop-codes.index');
 });

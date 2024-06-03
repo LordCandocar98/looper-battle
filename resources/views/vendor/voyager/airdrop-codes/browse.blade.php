@@ -4,7 +4,7 @@
 
 @section('page_header')
     <h1 class="page-title">
-        <i class="voyager-certificate"></i> Códigos Aidrop
+        <i class="voyager-certificate"></i> Códigos Airdrop
     </h1>
     <a href="{{ url('/admin/airdrop/generate-codes') }}" class="btn btn-success">
         <i class="voyager-plus"></i> Generate Codes
@@ -12,6 +12,10 @@
     @can('delete', app($dataType->model_name))
         @include('voyager::partials.bulk-delete')
     @endcan
+    
+    <a href="{{ route('voyager.export', ['slug' => 'airdrop-codes']) }}" class="btn btn-success">
+        <i class="fa fa-file-download"></i> Export to Excel
+    </a>
     @include('voyager::multilingual.language-selector')
 @stop
 

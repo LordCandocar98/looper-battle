@@ -12,6 +12,9 @@
     @can('delete', app($dataType->model_name))
         @include('voyager::partials.bulk-delete')
     @endcan
+    <a href="{{ route('voyager.export', ['slug' => 'special-codes']) }}" class="btn btn-success">
+        <i class="fa fa-file-download"></i> Export to Excel
+    </a>
     @include('voyager::multilingual.language-selector')
 @stop
 
