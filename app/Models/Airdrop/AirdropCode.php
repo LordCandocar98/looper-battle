@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Airdrop;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AirdropCode extends Model
 {

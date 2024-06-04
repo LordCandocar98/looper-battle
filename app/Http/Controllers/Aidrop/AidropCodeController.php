@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Aidrop;
 
 use Illuminate\Support\Str;
-use App\Models\AirdropCode;
 use Illuminate\Http\Request;
+use App\Models\Airdrop\AirdropCode;
 use App\Http\Controllers\Controller;
 
 class AidropCodeController extends Controller

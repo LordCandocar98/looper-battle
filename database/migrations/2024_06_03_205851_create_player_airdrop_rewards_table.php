@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -14,17 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('coins', function (Blueprint $table) {
+        Schema::create('player_airdrop_rewards', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('player_id')->unique();
-            $table->integer('amount')->default(0);
-            $table->integer('airdrop_coins')->default(0);
+            $table->unsignedBigInteger('player_id');
+            $table->unsignedBigInteger('airdrop_reward_id');
             $table->timestamps();
 
+            $table->unique(['player_id', 'airdrop_reward_id']);
+
             $table->foreign('player_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('airdrop_reward_id')->references('id')->on('airdrop_rewards')->onDelete('cascade')->onUpdate('cascade');
         });
-        DB::statement('ALTER TABLE coins ADD CONSTRAINT check_amount_non_negative CHECK (amount >= 0)');
-        DB::statement('ALTER TABLE coins ADD CONSTRAINT check_airdrop_coins_non_negative CHECK (airdrop_coins >= 0)');
     }
 
     /**
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coins');
+        Schema::dropIfExists('player_airdrop_rewards');
     }
 };
