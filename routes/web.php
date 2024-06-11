@@ -6,7 +6,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\ExportController;
-use App\Http\Controllers\Aidrop\AidropCodeController;
+use App\Http\Controllers\Airdrop\AirdropCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,8 +30,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/codes', [ItemController::class, 'index'])->name('codes.index');
 
 
-    Route::post('/airdrop/generate-codes', [AidropCodeController::class, 'generate'])->name('airdrop-codes.generate');
-    Route::get('/airdrop/generate-codes', [AidropCodeController::class, 'index'])->name('aidrop-codes.index');
+    Route::post('/airdrop/generate-codes', [AirdropCodeController::class, 'generate'])->name('airdrop-codes.generate');
+    Route::get('/airdrop/generate-codes', [AirdropCodeController::class, 'index'])->name('Airdrop-codes.index');
 });
 
 Route::get('/', function () {

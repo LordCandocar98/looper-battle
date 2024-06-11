@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Airdrop\AirdropGameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -71,6 +72,15 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
             function () {
                 Route::get('coins', 'coinReward');
                 Route::post('redeem-code', 'redeemCode');
+                // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
+            }
+        );
+    Route::controller(AirdropGameController::class)
+        ->prefix('airdrops')
+        ->group(
+            function () {
+                Route::post('/create-game', 'createGame');
+                Route::post('/end-game', 'endGame');
                 // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
             }
         );

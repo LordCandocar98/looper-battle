@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->integer('target_score');
             $table->integer('amount');
-            $table->date('start_date');
-            $table->date('end_date');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

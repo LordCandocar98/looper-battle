@@ -15,4 +15,8 @@ class AirdropReward extends Model
     {
         return $this->belongsToMany(User::class, 'user_airdrop_rewards')->withTimestamps();
     }
+    public function playerAirdropRewards()
+    {
+        return $this->hasMany(PlayerAirdropReward::class, '', '');
+    }
 }

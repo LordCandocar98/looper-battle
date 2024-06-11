@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Aidrop;
+namespace App\Http\Controllers\Airdrop;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Airdrop\AirdropCode;
 use App\Http\Controllers\Controller;
 
-class AidropCodeController extends Controller
+class AirdropCodeController extends Controller
 {
     public function index()
     {

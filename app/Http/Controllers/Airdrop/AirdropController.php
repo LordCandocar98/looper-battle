@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Aidrop;
+namespace App\Http\Controllers\Airdrop;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class AidropController extends Controller
+class AirdropController extends Controller
 {
     //
 }

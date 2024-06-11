@@ -13,15 +13,17 @@ class RewardCoinNotification extends Notification implements ShouldQueue
 
     protected $coinAmount;
     protected $user;
+    protected $coinType;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($coinAmount, $user)
+    public function __construct($coinAmount, $user, $coinType = 'looper coins')
     {
         $this->coinAmount = $coinAmount;
         $this->user = $user;
+        $this->coinType = $coinType;
     }
 
     /**
@@ -51,7 +53,7 @@ class RewardCoinNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('¡Has recibido una nueva recompensa!')
             ->greeting('¡Hola, ' . $this->user->nickname . '!')
-            ->line('¡Felicidades! Has recibido una recompensa de ' . $this->coinAmount . ' looper coins.')
+            ->line('¡Felicidades! Has recibido una recompensa de ' . $this->coinAmount . ' ' . $this->coinType . '.')
             ->line('Podrás visualizar tu recompensa en el juego.')
             ->salutation('¡Saludos, Atentamente: el Equipo de ' . config('app.name'))
             ->markdown('vendor.notifications.email', [

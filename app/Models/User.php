@@ -131,4 +131,14 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
         return $this->belongsToMany(Item::class, 'purchases', 'player_id', 'item_id')
             ->withTimestamps();
     }
+    public function grantAirdropReward($rewardId)
+    {
+        $this->airdropRewards()->attach($rewardId);
+    }
+
+    public function airdropRewards()
+    {
+        return $this->belongsToMany(Reward::class, 'player_airdrop_rewards', 'player_id', 'airdrop_reward_id')
+            ->withTimestamps();
+    }
 }

@@ -50,7 +50,7 @@
                             <input type="number" class="form-control" id="quantity" name="quantity" required>
                         </div>
                         <div class="form-group">
-                            <label for="value">Value</label>
+                            <label for="value">Value (USD)</label>
                             <input type="number" class="form-control" id="value" name="value" min="0"
                                 required>
                         </div>
