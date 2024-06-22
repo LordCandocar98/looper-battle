@@ -53,6 +53,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('matches', 'store');
                 Route::put('matches/{id}', 'update');
                 Route::delete('matches/{id}', 'destroy');
+                Route::get('matches/map-statistics', 'mapStatistics');
             }
         );
     Route::controller(PlayerScoreController::class)
@@ -64,6 +65,7 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('scores', 'store');
                 Route::put('scores/{id}', 'update');
                 Route::delete('scores/{id}', 'destroy');
+                Route::post('/scores/top-players', 'topPlayers');
             }
         );
     Route::controller(RewardController::class)
