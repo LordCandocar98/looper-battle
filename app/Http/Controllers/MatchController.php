@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\GameMatch;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -158,6 +159,52 @@ class MatchController extends Controller
             return response()->json([
                 'code' => 500,
                 'message' => 'Error al eliminar la partida',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Obtiene información de mapas diario, semanal e histórico
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function mapStatistics(Request $request)
+    {
+        try {
+            $dailyStats = GameMatch::select('map', DB::raw('COUNT(players_scores.id) as player_count'))
+                ->join('players_scores', 'matches.id', '=', 'players_scores.match_id')
+                ->whereDate('matches.created_at', Carbon::today())
+                ->groupBy('map')
+                ->orderBy('player_count', 'desc')
+                ->get();
+            $weeklyStats = GameMatch::select('map', DB::raw('COUNT(players_scores.id) as player_count'))
+                ->join('players_scores', 'matches.id', '=', 'players_scores.match_id')
+                ->whereBetween('matches.created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                ->groupBy('map')
+                ->orderBy('player_count', 'desc')
+                ->get();
+            $historicalStats = GameMatch::select('map', DB::raw('COUNT(players_scores.id) as player_count'))
+                ->join('players_scores', 'matches.id', '=', 'players_scores.match_id')
+                ->groupBy('map')
+                ->orderBy('player_count', 'desc')
+                ->get();
+            return response()->json([
+                'code' => 200,
+                'message' => 'Estadisticas de mapa.',
+                'data' => [
+                    'daily' => $dailyStats,
+                    'weekly' => $weeklyStats,
+                    'historical' => $historicalStats,
+                ],
+            ], 200);
+        } catch (Exception $e) {
+            Log::error($e->getLine() . ' - ' . $e->getMessage() . ' - ' . $e->getFile());
+            return response()->json([
+                'code' => 500,
+                'message' => 'Error al crear la partida.',
                 'error' => $e->getMessage(),
             ], 500);
         }

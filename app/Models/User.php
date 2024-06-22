@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use TCG\Voyager\Models\Role;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +25,7 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
         'email',
         'password',
         'profile_icon',
+        'gender',
         'default_settings',
         'is_verified'
     ];
@@ -140,5 +142,9 @@ class User extends \TCG\Voyager\Models\User implements JWTSubject, MustVerifyEma
     {
         return $this->belongsToMany(Reward::class, 'player_airdrop_rewards', 'player_id', 'airdrop_reward_id')
             ->withTimestamps();
+    }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }

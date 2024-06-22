@@ -96,6 +96,7 @@ class AuthController extends Controller
                 $query->select('code', 'items.id', 'name');
             }])
             ->loadSum('coins', 'amount')
+            ->loadSum('coins', 'airdrop')
             ->loadSum('playerScores', 'points')
             ->loadSum('playerScores', 'kills')
             ->loadSum('playerScores', 'deaths');

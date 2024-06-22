@@ -4,8 +4,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\PlayerScore;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PlayerScores\StorePlayerScoreRequest;
 
 class PlayerScoreController extends Controller
@@ -97,6 +99,49 @@ class PlayerScoreController extends Controller
         return response()->json([
             'code' => 200,
             'message' => 'Puntuación eliminada'
+        ], 200);
+    }
+
+    public function topPlayers(Request $request)
+    {
+        $type = $request->query('type', 'daily');
+
+        switch ($type) {
+            case 'weekly':
+                $topPlayers = PlayerScore::with(['player' => function ($query) {
+                    $query->select('id', 'nickname', 'profile_icon');
+                }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate(2);
+                break;
+
+            case 'historical':
+                $topPlayers = PlayerScore::with(['player' => function ($query) {
+                    $query->select('id', 'nickname', 'profile_icon');
+                }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate(2);
+                break;
+
+            case 'daily':
+            default:
+            $topPlayers = PlayerScore::with(['player' => function ($query) {
+                $query->select('id', 'nickname', 'profile_icon');
+            }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->whereDate('created_at', Carbon::today())
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate(2);
+                break;
+        }
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Solicitud exitosa.',
+            'data' => $topPlayers
         ], 200);
     }
 }
