@@ -104,7 +104,8 @@ class PlayerScoreController extends Controller
 
     public function topPlayers(Request $request)
     {
-        $type = $request->query('type', 'daily');
+        $type = $request->filled('type') ? $request->type : 'historical';
+        $perPage = $request->filled('perPage') ? $request->perPage : 5;
 
         switch ($type) {
             case 'weekly':
@@ -114,7 +115,7 @@ class PlayerScoreController extends Controller
                     ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
                     ->groupBy('player_id')
                     ->orderBy('total_points', 'desc')
-                    ->paginate(2);
+                    ->paginate($perPage);
                 break;
 
             case 'historical':
@@ -123,7 +124,7 @@ class PlayerScoreController extends Controller
                 }])->select('player_id', DB::raw('SUM(points) as total_points'))
                     ->groupBy('player_id')
                     ->orderBy('total_points', 'desc')
-                    ->paginate(2);
+                    ->paginate($perPage);
                 break;
 
             case 'daily':
@@ -134,7 +135,7 @@ class PlayerScoreController extends Controller
                     ->whereDate('created_at', Carbon::today())
                     ->groupBy('player_id')
                     ->orderBy('total_points', 'desc')
-                    ->paginate(2);
+                    ->paginate($perPage);
                 break;
         }
 

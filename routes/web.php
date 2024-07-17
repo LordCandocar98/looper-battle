@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::post('/airdrop/generate-codes', [AirdropCodeController::class, 'generate'])->name('airdrop-codes.generate');
     Route::get('/airdrop/generate-codes', [AirdropCodeController::class, 'index'])->name('Airdrop-codes.index');
+    Route::get('/maps', [MapController::class, 'index'])->name('map.index');
 });
 
 Route::get('/', function () {

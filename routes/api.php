@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Airdrop\AirdropGameController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -9,6 +8,8 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\RewardController;
 use App\Http\Controllers\PlayerScoreController;
+use App\Http\Controllers\Airdrop\AirdropController;
+use App\Http\Controllers\Airdrop\AirdropGameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,7 +54,9 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('matches', 'store');
                 Route::put('matches/{id}', 'update');
                 Route::delete('matches/{id}', 'destroy');
+                Route::get('/matches/won', 'wonMatches');
                 Route::get('matches/map-statistics', 'mapStatistics');
+                Route::get('/matches/history', 'playerMatchHistory');
             }
         );
     Route::controller(PlayerScoreController::class)
@@ -84,6 +87,13 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('/create-game', 'createGame');
                 Route::post('/end-game', 'endGame');
                 // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
+            }
+        );
+    Route::controller(AirdropController::class)
+        ->prefix('airdrop-reward')
+        ->group(
+            function () {
+                Route::get('/history', 'airdropRewardsHistory');
             }
         );
 });
