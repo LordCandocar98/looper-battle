@@ -42,7 +42,6 @@
 @lang('Regards'),<br>
 {{ config('app.name') }}
 @endif
-
 {{-- Subcopy --}}
 @isset($actionText)
 <x-slot:subcopy>
@@ -54,5 +53,8 @@
     ]
 ) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
 </x-slot:subcopy>
+@endisset
+@isset($banner)
+<img src="{{ $banner }}" alt="Banner de looper" style="max-width: 100%; height: auto;">
 @endisset
 </x-mail::message>

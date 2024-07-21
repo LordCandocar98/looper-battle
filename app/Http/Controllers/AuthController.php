@@ -92,6 +92,11 @@ class AuthController extends Controller
     public function me()
     {
         $user = auth()->user()
+            ->load(['items' => function ($query) {
+                $query->select('code', 'items.id', 'name');
+            }])
+            ->loadSum('coins', 'amount')
+            ->loadSum('coins', 'airdrop')
             ->loadSum('playerScores', 'points')
             ->loadSum('playerScores', 'kills')
             ->loadSum('playerScores', 'deaths');

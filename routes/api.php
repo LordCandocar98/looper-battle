@@ -4,8 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\RewardController;
 use App\Http\Controllers\PlayerScoreController;
+use App\Http\Controllers\Airdrop\AirdropController;
+use App\Http\Controllers\Airdrop\AirdropGameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['guest']], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
+    Route::get('items/list', [ItemController::class, 'list'])->name('items.list');
 });
 
 Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
@@ -49,6 +54,9 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('matches', 'store');
                 Route::put('matches/{id}', 'update');
                 Route::delete('matches/{id}', 'destroy');
+                Route::get('/matches/won', 'wonMatches');
+                Route::get('matches/map-statistics', 'mapStatistics');
+                Route::get('/matches/history', 'playerMatchHistory');
             }
         );
     Route::controller(PlayerScoreController::class)
@@ -60,6 +68,32 @@ Route::group(['middleware' => ['api', 'jwt.verify', 'verified']], function () {
                 Route::post('scores', 'store');
                 Route::put('scores/{id}', 'update');
                 Route::delete('scores/{id}', 'destroy');
+                Route::post('/scores/top-players', 'topPlayers');
+            }
+        );
+    Route::controller(RewardController::class)
+        ->prefix('rewards')
+        ->group(
+            function () {
+                Route::get('coins', 'coinReward');
+                Route::post('redeem-code', 'redeemCode');
+                // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
+            }
+        );
+    Route::controller(AirdropGameController::class)
+        ->prefix('airdrops')
+        ->group(
+            function () {
+                Route::post('/create-game', 'createGame');
+                Route::post('/end-game', 'endGame');
+                // Route::post('generate-codes', 'generateCodes')->name('special-codes.generate');
+            }
+        );
+    Route::controller(AirdropController::class)
+        ->prefix('airdrop-reward')
+        ->group(
+            function () {
+                Route::get('/history', 'airdropRewardsHistory');
             }
         );
 });

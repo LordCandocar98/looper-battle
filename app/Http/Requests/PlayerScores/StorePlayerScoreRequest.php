@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\PlayerScores;
 
+use App\Models\GameMatch;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -28,6 +29,14 @@ class StorePlayerScoreRequest extends FormRequest
     {
         return [
             'match_id' => 'required|exists:matches,id',
+            'team_id' => [
+                Rule::requiredIf(function () {
+                    // Obtener el game_mode del GameMatch asociado
+                    $gameMatch = GameMatch::findOrFail($this->match_id);
+                    return $gameMatch->game_mode === 'team_deathmatch';
+                }),
+                'exists:teams,id',
+            ],
             'points' => 'required|integer',
             'kills' => 'required|integer',
             'deaths' => 'required|integer',

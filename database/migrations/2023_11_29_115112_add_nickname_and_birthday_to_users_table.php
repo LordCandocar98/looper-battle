@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('nickname', 20)->unique()->after('name')->nullable();
             $table->date('birthday_date')->after('nickname')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
         });
     }
 

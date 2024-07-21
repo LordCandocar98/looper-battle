@@ -4,15 +4,17 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\PlayerScore;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PlayerScores\StorePlayerScoreRequest;
 
 class PlayerScoreController extends Controller
 {
     public function index()
     {
-        $scores = PlayerScore::with(['player', 'gameMatch'])->get();
+        $scores = PlayerScore::with(['player', 'gameMatch', 'team'])->get();
         return response()->json([
             'code' => 200,
             'message' => 'Solicitud exitosa.',
@@ -48,6 +50,7 @@ class PlayerScoreController extends Controller
         $score = PlayerScore::create([
             'player_id' => auth()->user()->id,
             'match_id' => $request->input('match_id'),
+            'team_id' => $request->input('team_id') ?? 0,
             'points' => $request->input('points'),
             'kills' => $request->input('kills'),
             'deaths' => $request->input('deaths'),
@@ -96,6 +99,50 @@ class PlayerScoreController extends Controller
         return response()->json([
             'code' => 200,
             'message' => 'Puntuación eliminada'
+        ], 200);
+    }
+
+    public function topPlayers(Request $request)
+    {
+        $type = $request->filled('type') ? $request->type : 'historical';
+        $perPage = $request->filled('perPage') ? $request->perPage : 5;
+
+        switch ($type) {
+            case 'weekly':
+                $topPlayers = PlayerScore::with(['player' => function ($query) {
+                    $query->select('id', 'nickname', 'profile_icon');
+                }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate($perPage);
+                break;
+
+            case 'historical':
+                $topPlayers = PlayerScore::with(['player' => function ($query) {
+                    $query->select('id', 'nickname', 'profile_icon');
+                }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate($perPage);
+                break;
+
+            case 'daily':
+            default:
+            $topPlayers = PlayerScore::with(['player' => function ($query) {
+                $query->select('id', 'nickname', 'profile_icon');
+            }])->select('player_id', DB::raw('SUM(points) as total_points'))
+                    ->whereDate('created_at', Carbon::today())
+                    ->groupBy('player_id')
+                    ->orderBy('total_points', 'desc')
+                    ->paginate($perPage);
+                break;
+        }
+
+        return response()->json([
+            'code' => 200,
+            'message' => 'Solicitud exitosa.',
+            'data' => $topPlayers
         ], 200);
     }
 }

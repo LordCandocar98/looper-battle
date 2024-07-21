@@ -56,6 +56,7 @@ class VerifyEmailNotification extends Notification
         ->markdown('vendor.notifications.email', [
             'actionUrl' => $verificationUrl,
             'actionText' => 'Verificar Correo Electrónico',
+            'banner' => url('storage/' . setting('admin.bannerlooper')),
             'alternativeText' => 'Si tienes problemas al hacer clic en el botón de verificación, copia y pega la siguiente URL en tu navegador: ' . $verificationUrl,
         ]);
     }
