@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('points');
             $table->integer('kills');
             $table->integer('deaths');
+            $table->boolean('is_winner')->default(false);
             $table->timestamps();
 
             $table->foreign('player_id')->references('id')->on('users')->onDelete('restrict')->onUpdate('cascade');

@@ -106,6 +106,7 @@ class UserController extends Controller
                         'points' => $score->points,
                         'kills' => $score->kills,
                         'deaths' => $score->deaths,
+                        'is_winner' => $score->is_winner,
                     ];
                 }),
             ];

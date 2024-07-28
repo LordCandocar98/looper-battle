@@ -40,6 +40,7 @@ class StorePlayerScoreRequest extends FormRequest
             'points' => 'required|integer',
             'kills' => 'required|integer',
             'deaths' => 'required|integer',
+            'is_winner' => 'sometimes|boolean',
             'match_unique' => Rule::unique('players_scores', 'player_id')
                 ->where(function ($query) {
                     return $query->where('match_id', $this->input('match_id'));

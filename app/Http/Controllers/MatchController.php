@@ -210,7 +210,7 @@ class MatchController extends Controller
             ], 500);
         }
     }
-    
+
     public function wonMatches(Request $request)
     {
         $user = auth()->user();
@@ -221,6 +221,7 @@ class MatchController extends Controller
         // Obtener los partidos ganados por el jugador
         $matches = GameMatch::whereIn('id', $playerMatchIds)
             // ->with('playerScores')
+            ->orderBy('created_at', 'desc')
             ->get()
             ->filter(function ($match) use ($user) {
                 return $this->isPlayerWinner($match, $user->id);
@@ -228,7 +229,7 @@ class MatchController extends Controller
 
         // Paginar manualmente la colección de partidas ganadas
         $page = $request->input('page', 1);
-        $perPage = 2;
+        $perPage = $request->filled('perPage') ? $request->perPage : 5;
         $paginatedMatches = $this->paginate($matches, $perPage, $page);
 
         return response()->json([
@@ -241,10 +242,10 @@ class MatchController extends Controller
     private function isPlayerWinner($match, $playerId)
     {
         if ($match->game_mode == 'free_for_all') {
-            $highestScore = $match->playerScores->max('score');
+            $highestScore = $match->playerScores->max('points');
             $playerScore = $match->playerScores->where('player_id', $playerId)->first();
 
-            return $playerScore->score == $highestScore;
+            return $playerScore->points == $highestScore;
         } else {
             // Asumiendo que los equipos se identifican por team_id (0: N/A, 1: RED, 2: BLUE)
             $teamScores = $match->playerScores->groupBy('team_id')->map(function ($team) {
@@ -277,21 +278,91 @@ class MatchController extends Controller
 
     public function playerMatchHistory(Request $request)
     {
-        $perPage = $request->filled('perPage') ? $request->perPage : 5;
         $playerId = auth()->id();
-    
-        $matchHistory = GameMatch::with(['playerScores' => function ($query) use ($playerId) {
-            $query->where('player_id', $playerId)->select('id', 'match_id', 'points', 'kills', 'deaths', 'created_at');
-        }])->whereHas('playerScores', function ($query) use ($playerId) {
-            $query->where('player_id', $playerId);
-        })
-        ->orderBy('created_at', 'desc')
-        ->paginate($perPage);
-    
+        $perPage = $request->filled('perPage') ? $request->perPage : 10;
+        $page = $request->filled('page') ? $request->page : 1;
+
+        $playedMatches = PlayerScore::where('player_id', $playerId)
+            ->with([
+                'gameMatch' => function ($query) {
+                    $query->with([
+                        'playerScores' => function ($query) {
+                            $query->with('player', 'team');
+                        }
+                    ]);
+                }
+            ])
+            ->latest()
+            ->paginate($perPage);
+
+        // Formatear el resultado
+        $formattedMatches = $playedMatches->map(function ($playerScore) {
+            $gameMatch = $playerScore->gameMatch;
+
+            // Agrupar puntuaciones por equipo
+            $teamScores = $gameMatch->playerScores->groupBy('team_id');
+
+            // Calcular totales por equipo
+            $teamTotals = $teamScores->map(function ($teamScores) {
+                $team = $teamScores->first()->team;
+                $totalPoints = $teamScores->sum('points');
+                $totalKills = $teamScores->sum('kills');
+                $totalDeaths = $teamScores->sum('deaths');
+
+                return [
+                    'team_id' => $team->id,
+                    'team_name' => $team->name,
+                    'team_color' => $team->color,
+                    'total_points' => $totalPoints,
+                    'total_kills' => $totalKills,
+                    'total_deaths' => $totalDeaths,
+                    'players' => $teamScores->map(function ($score) {
+                        $player = $score->player;
+                        return [
+                            'player_id' => $player->id,
+                            'name' => $player->name,
+                            'nickname' => $player->nickname,
+                            'profile_icon' => $player->profile_icon,
+                            'points' => $score->points,
+                            'kills' => $score->kills,
+                            'deaths' => $score->deaths,
+                        ];
+                    })->values(),
+                ];
+            })->values();
+
+            return [
+                'id' => $gameMatch->id,
+                'owner_id' => $gameMatch->owner_id,
+                'room_name' => $gameMatch->room_name,
+                'privacy' => $gameMatch->privacy,
+                'map' => $gameMatch->map,
+                'game_mode' => $gameMatch->game_mode,
+                'max_players' => $gameMatch->max_players,
+                'room_time_limit' => $gameMatch->room_time_limit,
+                'game_mode_goal' => $gameMatch->game_mode_goal,
+                'bots' => $gameMatch->bots,
+                'pay_tournament' => $gameMatch->pay_tournament,
+                'payment_code' => $gameMatch->payment_code,
+                'created_at' => $gameMatch->created_at,
+                'updated_at' => $gameMatch->updated_at,
+                'team_totals' => $teamTotals,
+            ];
+        });
+
+        $paginatedMatches = $this->paginate($formattedMatches, $perPage, $page);
         return response()->json([
             'code' => 200,
             'message' => 'Solicitud exitosa.',
-            'data' => $matchHistory
+            'data' => $paginatedMatches,
+            // 'pagination' => [
+            //     'total' => $playedMatches->total(),
+            //     'per_page' => $playedMatches->perPage(),
+            //     'current_page' => $playedMatches->currentPage(),
+            //     'last_page' => $playedMatches->lastPage(),
+            //     'from' => $playedMatches->firstItem(),
+            //     'to' => $playedMatches->lastItem(),
+            // ],
         ], 200);
     }
 }

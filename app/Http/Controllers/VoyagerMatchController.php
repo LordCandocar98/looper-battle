@@ -68,10 +68,10 @@ class VoyagerMatchController extends VoyagerBaseController
         $winner = null;
         $winningTeamId = null;
         if ($dataTypeContent->game_mode == 'free_for_all') {
-            $winner = $playerScores->sortByDesc('score')->first();
+            $winner = $playerScores->sortByDesc('points')->first();
         } else {
             $teamScores = $playerScores->groupBy('team_id')->map(function ($team) {
-                return $team->sum('score');
+                return $team->sum('points');
             });
             $winningTeamId = $teamScores->sortDesc()->keys()->first();
         }

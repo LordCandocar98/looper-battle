@@ -47,6 +47,7 @@ class PlayerScoreController extends Controller
                 ]
             ], 409);
         }
+        $isWinner = $request->filled('is_winner') ? $request->is_winner : false;
         $score = PlayerScore::create([
             'player_id' => auth()->user()->id,
             'match_id' => $request->input('match_id'),
@@ -54,6 +55,7 @@ class PlayerScoreController extends Controller
             'points' => $request->input('points'),
             'kills' => $request->input('kills'),
             'deaths' => $request->input('deaths'),
+            'is_winner' => $isWinner,
         ]);
 
         return response()->json([
